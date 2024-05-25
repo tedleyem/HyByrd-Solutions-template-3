@@ -1,14 +1,23 @@
-version: '2'
-services:    
-  app:
-    container_name: hybyrd 
-    image: hybyrd
-    env_file: hybyrd.env
-    build: 
-      context: . 
+version: '3'
+services:
+  web:
+    stdin_open: true
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    build:
+      context: .
       dockerfile: Dockerfile.dev
     ports:
-      - "3000:3000"  
+      - '3000:3000'
     volumes:
-      - './:/app'  
- 
+      - /app/node_modules
+      - .:/app
+  tests:
+    stdin_open: true
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+      - /app/node_modules
+      - .:/app
+    command: ['npm', 'run', 'test']
